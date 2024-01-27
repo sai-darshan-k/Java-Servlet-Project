@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task</title>
+</head>
+<body>
+    <h2>Welcome, Sai</h2>
+    <h1>Manage your tasks here</h1>
+
+    <!-- To-Do List -->
+    <div>
+        <h3>Add Task</h3>
+        <div id="tasks-container"></div>
+        <input type="text" id="taskInput" placeholder="Add a new task">
+        <button onclick="addTask()">Add Task</button>
+        <button onclick="retrieveTasks()">Retrieve Tasks</button>
+    </div>
+
+    <script>
+    function addTask() {
+        var taskInput = document.getElementById("taskInput");
+        var task = taskInput.value.trim();
+
+        if (task !== "") {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        console.log("Received HTML content:", xhr.responseText);
+                        var tasksContainer = document.getElementById("tasks-container");
+                        tasksContainer.innerHTML = xhr.responseText;
+                    } else {
+                        console.error("Error retrieving tasks. Status:", xhr.status);
+                    }
+                }
+            };
+
+            xhr.open("POST", "TaskServlet", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.send("action=add&task=" + encodeURIComponent(task));
+        }
+    }
+    
+    function editTask() {
+        var tasksContainer = document.getElementById("tasks-container");
+        var selectedTaskIndex = prompt("Enter the index of the task to edit:");
+
+        if (selectedTaskIndex !== null) {
+            var editedTask = prompt("Enter the new task text:");
+
+            if (editedTask !== null && editedTask.trim() !== "") {
+                var xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+                            console.log("Received HTML content:", xhr.responseText);
+                            tasksContainer.innerHTML = xhr.responseText;
+                        } else {
+                            console.error("Error editing task. Status:", xhr.status);
+                        }
+                    }
+                };
+
+                xhr.open("POST", "TaskServlet", true);
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                xhr.send("action=edit&index=" + encodeURIComponent(selectedTaskIndex) + "&task=" + encodeURIComponent(editedTask));
+            }
+        }
+    }
+
+
+    function deleteTask() {
+        var tasksContainer = document.getElementById("tasks-container");
+        var selectedTaskIndex = prompt("Enter the index of the task to delete:");
+
+        if (selectedTaskIndex !== null) {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        console.log("Received HTML content:", xhr.responseText);
+                        tasksContainer.innerHTML = xhr.responseText;
+                    } else {
+                        console.error("Error deleting task. Status:", xhr.status);
+                    }
+                }
+            };
+
+            xhr.open("POST", "TaskServlet", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.send("action=delete&index=" + encodeURIComponent(selectedTaskIndex));
+        }
+    }
+    
+    function retrieveTasks() {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    console.log("Received HTML content:", xhr.responseText);
+                    var tasksContainer = document.getElementById("tasks-container");
+                    tasksContainer.innerHTML = xhr.responseText;
+                } else {
+                    console.error("Error retrieving tasks. Status:", xhr.status);
+                }
+            }
+        };
+
+        xhr.open("POST", "TaskServlet", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.send("action=retrieve");
+    }
+
+    </script>
+</body>
+</html>

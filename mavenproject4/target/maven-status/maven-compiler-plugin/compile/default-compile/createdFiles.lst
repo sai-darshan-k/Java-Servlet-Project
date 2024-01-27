@@ -1,0 +1,7 @@
+com\mycompany\mavenproject4\resources\JakartaEE10Resource.class
+LogoutServlet.class
+HttpServlet.class
+LoginServlet.class
+com\mycompany\mavenproject4\JakartaRestConfiguration.class
+ProfilePictureServlet.class
+TaskServlet.class
